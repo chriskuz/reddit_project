@@ -1,165 +1,59 @@
-# ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png) Project 3: Web APIs & NLP
+# Differentiating Between Two Opposing Reddits
 
-### Description
+By: Christopher Kuzemka: [Github Repository](https://git.generalassemb.ly/chriskuz/project_3)
 
-In week four we've learned about a few different classifiers. In week five we'll learn about webscraping, APIs, and Natural Language Processing (NLP). This project will put those skills to the test.
+## Problem Statement
 
-For project 3, your goal is two-fold:
-1. Using [Pushshift's](https://github.com/pushshift/api) API, you'll collect posts from two subreddits of your choosing.
-2. You'll then use NLP to train a classifier on which subreddit a given post came from. This is a binary classification problem.
+My girlfirned loves to use Reddit. One of her favorite subreddits is ["r/aww"](https://www.reddit.com/r/aww/), a community dedicated forum largely consisting of cute animals and cute moments captured on video and on camera. However, there is another reddit that is the complete opposite of cute animals and cute moments captured on video and on camera -- this subreddit is known as ["r/natureismetal"](https://www.reddit.com/r/natureismetal) -- and it was merged together with "r/aww" to create a "super-subreddit" known as "r/dangerouslycute." The official reason for doing so is unknown, but the top rumor for the merger narrates that both moderators from each subreddit felt that they had enough of a mutual following to justify the merge and consolidate all posts together. This made my girlfriend very upset, as she was never a fan of the content from "r/natureismetal" and now she is tainted by its controversial content. We can also imagine that many others must also feel the same way about the merge. 
 
+As a good data scientist who wishes to make his significant other happy, I have decided to help her make an app that will run Javascript in the background with Reddit and ultimately separate the consolidated subreddit content. She will be writing all other code necessary to create the app, while we will explore the jumbled data of "r/dangerouslycute" and help create the model that will separate the two subreddits from this super-subreddit.
 
-#### About the API
+Using data collected previously from the subreddits before the merge, we are going to utilize Natural Language Processing classification models to separate the subreddit content. Our supervised learning models will be judged by their accuracy measure for success. The models we will explore will be LogisticRegression, Multinomial Naive Bayes, and Gaussian Naive Bayes with a use of CountVectorizer and TFIDFVectorizer across our titular data. We will do an in depth analysis on a successful model and explore the various quirks behind the influences of its predictions.
 
-Pushshift's API is fairly straightforward. For example, if I want the posts from [`/r/boardgames`](https://www.reddit.com/r/boardgames), all I have to do is use the following url: https://api.pushshift.io/reddit/search/submission?subreddit=boardgames
+## Executive Summary
+A study was conducted where we analyzed the problem of a merged subreddit known as r/dangerouslycute. r/dangerouslycute is a ficional subreddit which includes content from the intimidating and graphic subreddit known as r/natureismetal and and includes content from the happy and positive-intent subreddit known as r/aww. In a sense, each of these subreddits' collective images are polar opposites of one another. They particularly do not share the same Rules and Guidelines and have a stark difference in types of content typically displayed. However, we are unsure of how this merger came to fruition and are now tasked with the problem of generating a model to filter the subreddit. We hope to create a successful model that can be incorporated into a new application which will run in the background of Reddit and eventually wish to generalize such app to to work with other subreddits. 
 
-To help you get started, we have a primer video on how to use the API: https://youtu.be/AcrjEWsMi_E
+To gather the data, we utilized the pushshift Reddit API to collect submission data from the two non-fictional subreddits mentioned above. Data such as comment numbers per post, submission scores, classification metrics for appropriate content, date creation, author data, submission titles, and much more were collected for analysis. Much of the data was non-null value, but null text data were imputed with "spaces" for columns where necessary. Much attention was given towards the popularity of the submissions we collected to help understand any biases that would exist in the data. We even discovered which words were most frequent across each subreddit. 
 
----
+Finally, we constructed three general models (not including a baseline) and tested different vectorizing methods across each model. We also tested a variety of parameters across our models and conducted cross validated gridsearchs to ultimately discover which model performed best with certain features. Ultimately, we were able to come up with a model to passively satisfy any requirements we would need to make a generalized subreddit filtering application, but also opened the idea for future considerations on how such model could be optimized.
 
-### Requirements
+## Table of Contents
+[1.00 Data Loading](#1.00-Data-Loading)
 
-- Gather and prepare your data using the `requests` library.
-- **Create and compare two models**. One of these must be a Bayes classifier, however the other can be a classifier of your choosing: logistic regression, KNN, SVM, etc.
-- A Jupyter Notebook with your analysis for a peer audience of data scientists.
-- An executive summary of your results.
-- A short presentation outlining your process and findings for a semi-technical audience.
+[2.00 Data Cleaning and Analysis](#2.00-Data-Cleaning-and-Moderate-Analysis)
 
-**Pro Tip:** You can find a good example executive summary [here](https://www.proposify.biz/blog/executive-summary).
+- [2.01 Quick Check](#2.01-Quick-Check)
 
----
+- [2.02 Data Documentation Exploration](#2.02-Data-Documentation-Exploration)
 
-### Necessary Deliverables / Submission
+- [2.03 Cleaning](#2.03-Cleaning)
 
-- Code and executive summary must be in a clearly commented Jupyter Notebook.
-- You must submit your slide deck.
-- Materials must be submitted by **10:00 AM on Friday, April 24th**.
+- [2.04 Exploratory Data Analysis and Visualization](#2.04-Exploratory-Data-Analysis-and-Visualization)
 
----
+[3.00 Machine Learning Modeling and Visulalization](#3.00-Machine-Learning-Modeling-and-Visulalization)
 
-## Rubric
-Your local instructor will evaluate your project (for the most part) using the following criteria.  You should make sure that you consider and/or follow most if not all of the considerations/recommendations outlined below **while** working through your project.
+- [3.01 Model Preparation](#3.01-Model-Preparation)
 
-For Project 3 the evaluation categories are as follows:<br>
-**The Data Science Process**
-- Problem Statement
-- Data Collection
-- Data Cleaning & EDA
-- Preprocessing & Modeling
-- Evaluation and Conceptual Understanding
-- Conclusion and Recommendations
+- [3.02 Modeling](#3.02-Modeling)
 
-**Organization and Professionalism**
-- Organization
-- Visualizations
-- Python Syntax and Control Flow
-- Presentation
+- [3.03 Model Selection](#3.03-Model-Selection)
 
-**Scores will be out of 30 points based on the 10 categories in the rubric.** <br>
-*3 points per section*<br>
+- [3.04 Model Evaluation](#3.04-Model-Evaluation)
 
-| Score | Interpretation |
-| --- | --- |
-| **0** | *Project fails to meet the minimum requirements for this item.* |
-| **1** | *Project meets the minimum requirements for this item, but falls significantly short of portfolio-ready expectations.* |
-| **2** | *Project exceeds the minimum requirements for this item, but falls short of portfolio-ready expectations.* |
-| **3** | *Project meets or exceeds portfolio-ready expectations; demonstrates a thorough understanding of every outlined consideration.* |
+[4.00 Conclusions](#4.00-Conclusions)
 
+[5.00 Sources and References](#5.00-Sources-and-References)
 
-### The Data Science Process
-
-**Problem Statement**
-- Is it clear what the goal of the project is?
-- What type of model will be developed?
-- How will success be evaluated?
-- Is the scope of the project appropriate?
-- Is it clear who cares about this or why this is important to investigate?
-- Does the student consider the audience and the primary and secondary stakeholders?
-
-**Data Collection**
-- Was enough data gathered to generate a significant result?
-- Was data collected that was useful and relevant to the project?
-- Was data collection and storage optimized through custom functions, pipelines, and/or automation?
-- Was thought given to the server receiving the requests such as considering number of requests per second?
-
-**Data Cleaning and EDA**
-- Are missing values imputed/handled appropriately?
-- Are distributions examined and described?
-- Are outliers identified and addressed?
-- Are appropriate summary statistics provided?
-- Are steps taken during data cleaning and EDA framed appropriately?
-- Does the student address whether or not they are likely to be able to answer their problem statement with the provided data given what they've discovered during EDA?
-
-**Preprocessing and Modeling**
-- Is text data successfully converted to a matrix representation?
-- Are methods such as stop words, stemming, and lemmatization explored?
-- Does the student properly split and/or sample the data for validation/training purposes?
-- Does the student test and evaluate a variety of models to identify a production algorithm (**AT MINIMUM:** Bayes and one other model)?
-- Does the student defend their choice of production model relevant to the data at hand and the problem?
-- Does the student explain how the model works and evaluate its performance successes/downfalls?
-
-**Evaluation and Conceptual Understanding**
-- Does the student accurately identify and explain the baseline score?
-- Does the student select and use metrics relevant to the problem objective?
-- Does the student interpret the results of their model for purposes of inference?
-- Is domain knowledge demonstrated when interpreting results?
-- Does the student provide appropriate interpretation with regards to descriptive and inferential statistics?
-
-**Conclusion and Recommendations**
-- Does the student provide appropriate context to connect individual steps back to the overall project?
-- Is it clear how the final recommendations were reached?
-- Are the conclusions/recommendations clearly stated?
-- Does the conclusion answer the original problem statement?
-- Does the student address how findings of this research can be applied for the benefit of stakeholders?
-- Are future steps to move the project forward identified?
-
-
-### Organization and Professionalism
-
-**Project Organization**
-- Are modules imported correctly (using appropriate aliases)?
-- Are data imported/saved using relative paths?
-- Does the README provide a good executive summary of the project?
-- Is markdown formatting used appropriately to structure notebooks?
-- Are there an appropriate amount of comments to support the code?
-- Are files & directories organized correctly?
-- Are there unnecessary files included?
-- Do files and directories have well-structured, appropriate, consistent names?
-
-**Visualizations**
-- Are sufficient visualizations provided?
-- Do plots accurately demonstrate valid relationships?
-- Are plots labeled properly?
-- Are plots interpreted appropriately?
-- Are plots formatted and scaled appropriately for inclusion in a notebook-based technical report?
-
-**Python Syntax and Control Flow**
-- Is care taken to write human readable code?
-- Is the code syntactically correct (no runtime errors)?
-- Does the code generate desired results (logically correct)?
-- Does the code follows general best practices and style guidelines?
-- Are Pandas functions used appropriately?
-- Are `sklearn` and `NLTK` methods used appropriately?
-
-**Presentation**
-- Is the problem statement clearly presented?
-- Does a strong narrative run through the presentation building toward a final conclusion?
-- Are the conclusions/recommendations clearly stated?
-- Is the level of technicality appropriate for the intended audience?
-- Is the student substantially over or under time?
-- Does the student appropriately pace their presentation?
-- Does the student deliver their message with clarity and volume?
-- Are appropriate visualizations generated for the intended audience?
-- Are visualizations necessary and useful for supporting conclusions/explaining findings?
-
-
----
-
-### Why did we choose this project for you?
-This project covers three of the biggest concepts we cover in the class: Classification Modeling, Natural Language Processing and Data Wrangling/Acquisition.
-
-Part 1 of the project focuses on **Data wrangling/gathering/acquisition**. This is a very important skill as not all the data you will need will be in clean CSVs or a single table in SQL.  There is a good chance that wherever you land you will have to gather some data from some unstructured/semi-structured sources; when possible, requesting information from an API, but often scraping it because they don't have an API (or it's terribly documented).
-
-Part 2 of the project focuses on **Natural Language Processing** and converting standard text data (like Titles and Comments) into a format that allows us to analyze it and use it in modeling.
-
-Part 3 of the project focuses on **Classification Modeling**.  Given that project 2 was a regression focused problem, we needed to give you a classification focused problem to practice the various models, means of assessment and preprocessing associated with classification.   
+|__Data Variable__|__Type__|__Significance__|
+|---|---|---|
+|`title`|__String Object__|*Submission title*|
+|`subreddit`|__String Object__|*Native subreddit of submission*|
+|`reddit_creation_identifier`|__Integer__|*ID for when submission was created*|
+|`author`|__String Object__|*Submission author*|
+|`number_of_comments`|__Integer__|*Number of comments on submission*|
+|`score`|__Integer__|*Submission score*|
+|`text_in_post`|__Boolean__|*Identifies if text is in post content*|
+|`nsfw`|__Boolean__|*Identifies if submission is for mature audiences*|
+|`author_flair_text`|__String Object__|*Subtitle for author*|
+|`total_awards_received`|__Integer__|*Number of virtual awards a submission receives*|
+|`timestamp`|__Datetime Object__|*Date of when submission was created*|
