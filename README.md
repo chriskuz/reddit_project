@@ -57,3 +57,36 @@ Finally, we constructed three general models (not including a baseline) and test
 |`author_flair_text`|__String Object__|*Subtitle for author*|
 |`total_awards_received`|__Integer__|*Number of virtual awards a submission receives*|
 |`timestamp`|__Datetime Object__|*Date of when submission was created*|
+
+## Conclusions
+The question comes down to whether we were able to create a model strong enough for app development. Before answering this question, let's recap on some of the things mentioned that would affect our data and modeling:
+
+- our data sample was only 5000 submissions from subreddits with millions of users and thousands online at a given time (50/50 split for r/aww and r/natureismetal content)
+- our data did not appear to be very popular content due to the lack of comments, high scores, and virtual awards (this means there was less scrutiny)
+- our models were only based off the submission titles alone (lacking other helpful classification features, numeric weighting, text data, and image data)
+- we did not explore every possible model known to existance and did not explore every parameter to help a model's accuracy
+
+With a testing accuracy score of ~84% with our successful Multinomial Naieve Bayes model (incorporating a TFIDF Vectorizer), we are left with ~16% error in our model. In the world of large data, this sort of error will not be tolerated on the app market and our app will not be marketed as a successful app as a fair portion of posts we wish to differentiate on r/dangerouslycute will fail to be filtered. My girlfriend will be unhappy to learn this and I am sure many users who feel the same as her about r/dangerouslycute's content will feel the same way. However, the scores we found through these models across different parameters does not indicate a lost cause. With all of the assumptions made for our models and with all of the considerations for error made with our models, there is room for improvement. With only 5000 submissions total which were possibly not very scrutinized, our model successfully recognizes from the titles alone which subreddit some submission comes from with ~84% accuracy (doesn't sound bad when thinking about it in this way). This is certainly not app ready, but considerations for the future, we could incorporate:
+
+- ensemble modeling methods to get better model outputs
+- pulling more data in general
+- analyzing more scrutinzed data
+- using a web server to run calculations and many models 
+- considering other fetaures to better our model's performance (NSFW calssifiers, numeric popularity weights, text features, image features)
+
+All this considered, we will be continuing to work on a better model to help make our app ready for deployment. Once a successful model is considered, we could begin to further generalize our filtering algorithms and maybe move our model onto other subreddits facing the same problem. 
+
+## Sources and References
+- [r/aww subreddit page](https://www.reddit.com/r/aww/)
+- [r/natureismetal page](https://www.reddit.com/r/natureismetal)
+- [Google Search of Reddit Creation](https://www.google.com/search?client=safari&rls=en&q=when+did+reddit+begin&ie=UTF-8&oe=UTF-8)
+- [Reddit Search of Reddit Founders](https://www.reddit.com/r/AskReddit/comments/21875u/what_happend_with_the_guys_who_created_reddit_are/)
+- [Reddit Robots.txt Page](https://www.reddit.com/robots.txt)
+- [pushshift.io API Webpage](https://pushshift.io)
+- [pushift Github Repository](https://github.com/pushshift/api)
+- [r/aww Rules & Guidelines](https://www.reddit.com/r/aww/wiki/index)
+- [r/natureismetal Rules & Guidelines](https://www.reddit.com/r/natureismetal/submit)
+- [Most Common English Words](https://www.rypeapp.com/most-common-english-words/)
+- [Wikipedia Search of Most Common Words Shown in Every Language](https://en.wiktionary.org/wiki/Wiktionary:Frequency_lists)
+- [Scikit-learn Documentation Multinomial Naive Bayes](https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html)
+- [Multinomial Naive Bayes forum on meaning of alpha](https://datascience.stackexchange.com/questions/30473/how-does-the-mutlinomial-bayess-alpha-parameter-affects-the-text-classificati)
